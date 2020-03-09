@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hp.dao.PermissionDao">
+
+	<!--查询所有权限-->
+	<select id="findAll" resultType="Permission">
+		select * from sys_permission
+	</select>
+
+	<!--保存权限,需要关联父权限-->
+	<select id="findAllParent" resultType="Permission">
+		select * from sys_permission where pid = 0
+	</select>
+
+	<!--保存-->
+	<insert id="save" parameterType="Permission">
+		insert into sys_Permission(permissionName,url,pid) values(#{permissionName},#{url},#{pid})
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

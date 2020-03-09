@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hp.dao.OrderDao">
+
+	<resultMap id="base_map" type="order">
+		<id property="id" column="id"></id>
+		<result property="orderNum" column="orderNum"></result>
+		<result property="orderTime" column="orderTime"></result>
+		<result property="peopleCount" column="peopleCount"></result>
+		<result property="orderDesc" column="orderDesc"></result>
+		<result property="payType" column="payType"></result>
+		<result property="orderStatus" column="orderStatus"></result>
+		<!--关联属性-->
+		<association property="product" javaType="product">
+			<result property="productName" column="productName"></result>
+		</association>
+	</resultMap>
+
+	<!--因为下面SQL查询的字段有的不属于 order实体类,所以用 resultMap结果集-->
+    <select id="findAll" resultMap="base_map">
+		select o.*,p.productName from orders o left join product p on o.productId=p.id
+	</select>
+
+
+	<!--保存订单-->
+	<insert id="save" parameterType="order">
+		insert into orders(orderNum,orderTime,peopleCount,orderDesc,payType,orderStatus,productId)
+		values(#{orderNum},#{orderTime},#{peopleCount},#{orderDesc},#{payType},#{orderStatus},#{product.id})
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

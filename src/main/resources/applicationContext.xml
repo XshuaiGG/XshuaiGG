@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+      
+      <!-- DAO层配置 -->
+      
+      <!-- 加载外部数据库属性文件 -->
+      <context:property-placeholder location="classpath:jdbc.properties"/>
+      <!-- 配置数据源 -->
+      <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+      	<property name="driverClass" value="${jdbc.driver}"></property>
+      	<property name="jdbcUrl" value="${jdbc.url}"></property>
+      	<property name="user" value="${jdbc.username}"></property>
+      	<property name="password" value="${jdbc.password}"></property>
+      </bean>
+      <!-- 配置SqlSessionFactory -->  
+      <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+      	<property name="dataSource" ref="dataSource"></property>
+          <!--配置分页助手-->
+          <property name="plugins">
+              <array>
+                  <!-- 引入插件类型 -->
+                  <bean class="com.github.pagehelper.PageInterceptor">
+                      <!-- 指定使用的数据库-->
+                      <property name="properties">
+                          <!--因为分页插件支持多种数据库,需指明当前所用数据库 ,helperDialect  mysql数据库(方言)-->
+                          <props>
+                              <prop key="helperDialect">mysql</prop>
+                          </props>
+                      </property>
+                  </bean>
+              </array>
+          </property>
+
+      	<!-- 引入sqlMapConfig.xml文件 -->
+        <property name="configLocation" value="classpath:sqlMapConfig.xml"></property>
+      	<!-- 配置别名 -->
+      	<property name="typeAliasesPackage" value="cn.hp.domain"></property>
+      </bean>
+      
+       <!-- 扫描DAO层接口的包,创建动态代理对象,存入到spring容器中 -->
+       <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+       	<property name="basePackage" value="cn.hp.dao"></property>
+       </bean>
+       
+       <!-- 业务层 -->
+       
+       <!-- 开启注解 -->
+       <context:component-scan base-package="cn.hp.service,cn.hp.log"/>
+       <!-- 配置事务管理器 -->
+       <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+       	<!-- 注入数据源 -->
+       	<property name="dataSource" ref="dataSource"></property>
+       </bean>
+       <!-- 开启事务注解 -->
+       <tx:annotation-driven/>
+  		
+  		<!-- 日志 -->
+  		<!--<bean id="logController" class="cn.hp.log.LogController"></bean>
+
+  		<aop:config>
+  			<aop:pointcut expression="execution(* cn.hp.controller.*.*(..))" id="pc"/>
+  			<aop:aspect ref="logController">
+  				<aop:around method="around" pointcut-ref="pc"/>
+  			</aop:aspect>
+  		</aop:config>-->
+</beans>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+    	xmlns:security="http://www.springframework.org/schema/security"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop
+    	http://www.springframework.org/schema/aop/spring-aop.xsd
+    	http://www.springframework.org/schema/security
+    	http://www.springframework.org/schema/security/spring-security.xsd">
+		        
+        <!-- 扫描控制器 -->
+        <context:component-scan base-package="cn.hp.controller"/>
+        <!-- 注解驱动:处理器适配器和处理器映射器 -->
+        <mvc:annotation-driven conversion-service="conversionService"/>
+        <!-- 视图解析器 -->
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                <property name="prefix" value="/pages/"></property>
+                <property name="suffix" value=".jsp"></property>
+        </bean>
+        
+        <!-- 文件上传 -->
+        
+        <!-- 拦截器 -->
+        <!-- 自定义类型转换器 -->
+        <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        	<property name="converters">
+        		<set>
+        			<bean class="cn.hp.converter.StringToDateConverter"></bean>
+        		</set>
+        	</property>
+        </bean>
+        <!-- 静态资源全部放行 -->
+        <mvc:default-servlet-handler/>
+		
+		<!-- aop的自动代理 -->
+		<aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy><!--使用安全框架的时候这句话可以注释掉，使用xml的时候不可以省略 不然 LogAspect这个文件内的日志会失效-->
+		<!--配置开启security的注解支持-->
+		<security:global-method-security secured-annotations="enabled"/>
+
+</beans>

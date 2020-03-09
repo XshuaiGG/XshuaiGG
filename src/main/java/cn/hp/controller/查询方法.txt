@@ -1,0 +1,10 @@
+查询所有
+    @GetMapping("/findAll")
+    public ModelAndView findAll(ModelAndView model){
+            List<Product> productList = productService.findAll();
+            //封装数据
+            model.addObject("productList",productList);
+            //设置视图页面
+            model.setViewName("product-list");
+            return model;
+    }
